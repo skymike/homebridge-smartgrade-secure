@@ -5,6 +5,20 @@ import { session, json, deferred } from './helpers.mjs';
 const jwt = exp => `e30.${Buffer.from(JSON.stringify({exp})).toString('base64url')}.fixture`;
 const credentials={username:'test-app',password:'test-password'};
 
+test('numeric cloud account IDs normalize before profile validation and persistence', async () => {
+  const saved=[];
+  const client=new SmartGradeClient({credentials,saveSession:async s=>saved.push(s),fetch:async url=>{
+    if(url.endsWith('/apps/token')) return json({token:'app',exp:4102444800});
+    if(url.endsWith('/customers')) return json({success:true});
+    if(url.endsWith('/login/code')) return json({jwt:jwt(4102444800),user:{id:123}});
+    return json({id:123});
+  }});
+  await client.requestLoginCode('0501234567');
+  assert.equal((await client.verifyLoginCode('1234')).userId,'123');
+  assert.deepEqual(await client.getProfile(),{id:'123'});
+  assert.equal(saved[0].userId,'123');
+});
+
 test('phone/code login uses only the app token and validates profile before saving', async () => {
   const requests=[], saved=[];
   const client = new SmartGradeClient({ credentials, saveSession:async value=>saved.push(value), fetch:async (url,opts)=>{

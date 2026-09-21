@@ -11,7 +11,7 @@ Initial implementation with offline protocol and Homebridge tests. Account login
 
 ## Supported devices and behavior
 
-- SmartGrade product type **6**, identified by the Android app as its boiler switch.
+- SmartGrade product types **6 and 7**, identified by the Android app as boiler switches.
 - Explicit on/off commands, cloud-reported status, and HTTPS polling every 30 seconds by default.
 - Unknown, offline or stale state reports unavailable. A command is checked with a subsequent cloud read; an HTTP acknowledgement alone is not treated as proof of physical operation.
 - Timed-out writes are never automatically resent. Commands for the same heater are serialized.

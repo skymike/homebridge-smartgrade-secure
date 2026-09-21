@@ -81,3 +81,9 @@ Evidence: `data/connection/MqttConnector.java` and `DevicePowerOn.java`.
 - [Official Homebridge plugin template](https://github.com/homebridge/homebridge-plugin-template).
 
 An initial plugin implementation now exists with offline protocol and Homebridge tests. Installation on the user's Homebridge, npm publication, account login verification and physical device control have not been performed.
+
+## Live API verification (2026-09-21)
+
+The authenticated profile and login response return numeric user IDs; these are normalized to strings without coercing tokens or accepting unsafe numeric IDs. Site/device IDs remain strings. Site device-list responses are plain arrays. The APK single-device GET currently returns HTTP 405, so readback falls back only for that status to the authenticated site device list and validates the exact device and site identity.
+
+Product 7 maps to `title_device_type7`, whose English APK resource is "Smart switch boiler box". The two account boilers use this type, so types 6 and 7 are supported. Login, discovery and read-only status were verified; physical power control has not been tested.

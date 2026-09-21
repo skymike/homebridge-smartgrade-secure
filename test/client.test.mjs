@@ -46,7 +46,7 @@ test('discovery follows profile/sites/devices shape and deduplicates shared devi
     routes.push(new URL(url).pathname + new URL(url).search);
     if (url.endsWith('/profile')) return json({id:'user-1'});
     if (url.includes('/users/user-1/sites')) return json({sites:[{id:'site-1'},{id:'site-1'}]});
-    return json({devices:[rawDevice]});
+    return json([rawDevice]);
   }});
   const devices = await client.listDevices();
   assert.equal(devices.length,1);
@@ -69,4 +69,15 @@ test('request deadline and client shutdown abort network operations', async () =
   try { await assert.rejects(client.getProfile(),CloudError); } finally { clearTimeout(keepAlive); }
   client.close();
   await assert.rejects(client.getProfile(),CloudError);
+});
+
+test('unsupported single-device GET falls back to site list and validates identity', async()=>{
+ const routes=[];
+ const client=new SmartGradeClient({session:session(),fetch:async url=>{
+  routes.push(url);
+  return url.endsWith('/devices/heater-1')?json({},405):json([rawDevice]);
+ }});
+ assert.equal((await client.getDevice('site-1','heater-1')).id,'heater-1');
+ assert.equal(routes.length,2);
+ await assert.rejects(client.getDevice('wrong-site','heater-1'),CloudError);
 });

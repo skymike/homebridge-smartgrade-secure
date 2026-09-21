@@ -1,4 +1,4 @@
-import { arrayField, CloudError, expiry, invalidResponse, jwtExpiry, nonempty, object, parseDevice, parseSession } from './protocol.js';
+import { arrayField, CloudError, expiry, identifier, invalidResponse, jwtExpiry, nonempty, object, parseDevice, parseSession } from './protocol.js';
 import type { Bootstrap, Device, Session } from './protocol.js';
 
 export interface ClientOptions {
@@ -78,7 +78,7 @@ export class SmartGradeClient {
   async verifyLoginCode(code: string): Promise<Session> {
     if (!this.loginRequested || !/^[0-9]{4,8}$/.test(code)) throw new CloudError('AUTH', 'Request and enter a valid verification code first.');
     const response = object(await this.raw('users/login/code', 'POST', { user: { code } }, { 'X-APP-TOKEN': `Bearer ${this.app!.token}` }));
-    const userToken = nonempty(response.jwt), userId = nonempty(object(response.user).id);
+    const userToken = nonempty(response.jwt), userId = identifier(object(response.user).id);
     const next: Session = {
       userToken, userId, userExpiresAt: jwtExpiry(userToken), appToken: this.app!.token, appExpiresAt: this.app!.exp,
     };
@@ -86,7 +86,7 @@ export class SmartGradeClient {
     const profile = object(await this.raw('users/profile', 'GET', undefined, {
       Authorization: `Bearer ${userToken}`, 'X-APP-TOKEN': `Bearer ${this.app!.token}`,
     }));
-    if (nonempty(profile.id) !== userId) return invalidResponse();
+    if (identifier(profile.id) !== userId) return invalidResponse();
     await this.options.saveSession?.(next);
     this.session = next;
     this.loginRequested = false;
@@ -136,7 +136,7 @@ export class SmartGradeClient {
   }
 
   async getProfile(): Promise<{ id: string }> {
-    const id = nonempty(object(await this.request('users/profile')).id);
+    const id = identifier(object(await this.request('users/profile')).id);
     if (id !== this.session?.userId) return invalidResponse();
     return { id };
   }
@@ -150,7 +150,8 @@ export class SmartGradeClient {
       const id = nonempty(object(site).id);
       if (visited.has(id)) continue;
       visited.add(id);
-      const rows = arrayField(await this.request(`sites/${encodeURIComponent(id)}/devices`), 'devices');
+      const response = await this.request(`sites/${encodeURIComponent(id)}/devices`);
+      const rows = Array.isArray(response) ? response : arrayField(response, 'devices');
       for (const row of rows) {
         const device = parseDevice(row);
         if (device.siteId !== id) return invalidResponse();
@@ -161,8 +162,18 @@ export class SmartGradeClient {
   }
 
   async getDevice(siteId: string, deviceId: string): Promise<Device> {
-    const response = await this.request(`sites/${encodeURIComponent(nonempty(siteId))}/devices/${encodeURIComponent(nonempty(deviceId))}`);
-    const device = parseDevice(object(response).device);
+    let device: Device;
+    try {
+      const response = await this.request(`sites/${encodeURIComponent(nonempty(siteId))}/devices/${encodeURIComponent(nonempty(deviceId))}`);
+      device = parseDevice(object(response).device);
+    } catch (error) {
+      if (!(error instanceof CloudError) || error.status !== 405) throw error;
+      const response = await this.request(`sites/${encodeURIComponent(nonempty(siteId))}/devices`);
+      const rows = Array.isArray(response) ? response : arrayField(response, 'devices');
+      const matches = rows.map(parseDevice).filter(row => row.id === deviceId);
+      if (matches.length !== 1) return invalidResponse();
+      device = matches[0]!;
+    }
     if (device.id !== deviceId || device.siteId !== siteId) return invalidResponse();
     return device;
   }

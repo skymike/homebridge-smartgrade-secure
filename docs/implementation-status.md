@@ -4,14 +4,14 @@
 
 - Cloud client with app/user token headers, phone/code login, discovery, explicit power commands and bounded requests.
 - Atomic private session storage, local bootstrap extraction, non-echoing setup prompts, app-token renewal and user-session re-login handling.
-- Homebridge HAP switch platform for product type 6 with persistent accessory IDs, serialized commands, readback, unavailable-state handling and shutdown cleanup.
+- Homebridge HAP switch platform for product types 6 and 7 with persistent accessory IDs, serialized commands, readback, unavailable-state handling and shutdown cleanup.
 - Config schema, setup documentation, private alpha tarball and a Windows/Linux CI matrix.
 
 ## Verification performed locally
 
 - TypeScript build succeeded.
-- 33 offline tests passed with actual Homebridge 1.11.4 classes.
-- The same 33 tests passed with actual Homebridge 2.4.0 classes.
+- 36 offline tests passed with actual Homebridge 1.11.4 classes.
+- The same 36 tests passed with actual Homebridge 2.4.0 classes.
 - The 21-file package allowlist and isolated entrypoint registration check passed.
 - Independent review identified a discovery/write race, a device-site migration issue, and a late completion from a stopped setter. All three were reproduced as failing tests, fixed, and passed in the complete suite.
 
@@ -27,6 +27,6 @@
 
 ## Remaining verification
 
-Actual account login, device discovery and cloud status freshness require the user's phone/code login. Physical control requires an explicitly authorized test of a named heater. The plugin has not been installed on the user's Homebridge, merged to main, or published to npm.
+SMS login, profile validation, device discovery, and read-only status retrieval were verified against the live cloud on 2026-09-21. Both discovered type-7 boilers were online and off. Live responses required numeric account-ID normalization and plain-array device lists. The single-device GET returned HTTP 405; status reads now fall back to the site device list with exact identity validation. Cloud-to-physical status freshness remains unverified. Physical control requires an explicitly authorized test of a named heater. The plugin has not been installed on the user's Homebridge, merged to main, or published to npm.
 
 No deferred minor findings from the independent review.

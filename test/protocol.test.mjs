@@ -16,3 +16,11 @@ test('malformed states and identifiers cannot be turned into controllable device
     assert.throws(() => parseDevice({ ...rawDevice, ...patch }), CloudError);
   }
 });
+
+test('boiler product types 6 and 7 are supported, sockets are excluded', async () => {
+  const {supported,identifier}=await import('../dist/protocol.js');
+  assert.equal(supported({...parseDevice(rawDevice),productId:7}),true);
+  assert.equal(supported(parseDevice(rawDevice)),true);
+  assert.equal(supported({...parseDevice(rawDevice),productId:2}),false);
+  for(const id of [-1,1.5,NaN,Infinity,Number.MAX_SAFE_INTEGER+1,true,null]) assert.throws(()=>identifier(id),CloudError);
+});

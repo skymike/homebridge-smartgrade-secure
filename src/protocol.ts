@@ -60,6 +60,11 @@ export function nonempty(value: unknown): string {
   return value;
 }
 
+export function identifier(value: unknown): string {
+  if (typeof value === 'number' && Number.isSafeInteger(value) && value >= 0) return String(value);
+  return nonempty(value);
+}
+
 export function arrayField(value: unknown, field: string): unknown[] {
   const result = object(value)[field];
   if (!Array.isArray(result)) return invalidResponse();
@@ -78,4 +83,4 @@ export function parseDevice(value: unknown): Device {
   };
 }
 
-export const supported = (device: Device): boolean => device.productId === 6;
+export const supported = (device: Device): boolean => device.productId === 6 || device.productId === 7;
