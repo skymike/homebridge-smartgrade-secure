@@ -80,4 +80,4 @@ Evidence: `data/connection/MqttConnector.java` and `DevicePowerOn.java`.
 - [Homebridge dynamic platform lifecycle](https://developers.homebridge.io/homebridge/interfaces/DynamicPlatformPlugin.html).
 - [Official Homebridge plugin template](https://github.com/homebridge/homebridge-plugin-template).
 
-Implementation, installation, publication, and live device control have not been performed.
+An initial plugin implementation now exists with offline protocol and Homebridge tests. Installation on the user's Homebridge, npm publication, account login verification and physical device control have not been performed.

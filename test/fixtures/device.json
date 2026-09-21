@@ -1,0 +1,5 @@
+{
+  "id": "heater-1", "site_id": "site-1", "name": "Test Boiler", "product_id": 6,
+  "firmware": "fixture", "is_online": true, "switch_1": false, "switch_2": null,
+  "switch_3": null, "switch_num": 1, "max_on_min": 60, "timers": []
+}

@@ -1,0 +1,46 @@
+{
+  "name": "homebridge-smartgrade-secure",
+  "version": "0.1.0-alpha.1",
+  "description": "Homebridge water heater switches for SmartGrade Secure via the IoTech cloud",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "smartgrade-setup": "dist/setup.js"
+  },
+  "files": [
+    "dist",
+    "config.schema.json",
+    "README.md"
+  ],
+  "keywords": [
+    "homebridge-plugin",
+    "supports-hap",
+    "water-heater",
+    "smartgrade"
+  ],
+  "engines": {
+    "node": "^22.0.0 || ^24.0.0",
+    "homebridge": "^1.8.0 || ^2.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skymike/homebridge-smartgrade-secure.git"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "pretest": "tsc -p tsconfig.json",
+    "test": "node --test test/*.test.mjs",
+    "prepack": "tsc -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "homebridge": "^1.8.0 || ^2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "homebridge": "^1.11.0",
+    "homebridge-v2": "npm:homebridge@2.4.0",
+    "typescript": "~5.9.3"
+  }
+}

@@ -141,4 +141,4 @@ assert.throws(() => parseDevice({id:'heater',site_id:'site',name:'Boiler',produc
 
 ## Execution recommendation
 
-Use native execution in this task: the same protocol findings inform authentication, control and state reconciliation. This avoids duplicating decompilation context between implementers. Implementation-plan review and execution selection are the remaining workflow gate.
+Native execution in this task was accepted when the user asked to continue development in the GitHub repository. Protocol, authentication, Homebridge integration and local packaging are implemented; live account verification and physical testing remain pending user participation.
