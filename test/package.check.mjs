@@ -5,7 +5,8 @@ import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { createRequire } from 'node:module';
 
-const archive = process.argv[2];
+const project = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
+const archive = process.argv[2] ?? `${project.name}-${project.version}.tgz`;
 assert.ok(archive, 'Pass the packed .tgz path');
 const bytes = gunzipSync(await readFile(archive));
 const entries = new Map();
@@ -22,11 +23,12 @@ for (let offset = 0; offset + 512 <= bytes.length;) {
 }
 assert.ok(entries.size > 5);
 for (const name of entries.keys()) {
-  assert.match(name, /^package\/(dist\/[a-z-]+\.(?:js|d\.ts)|homebridge-ui\/(?:server\.js|public\/(?:index\.html|app\.js))|README\.md|package\.json|config\.schema\.json)$/);
+  assert.match(name, /^package\/(dist\/[a-z-]+\.(?:js|d\.ts)|homebridge-ui\/(?:server\.js|public\/(?:index\.html|app\.js))|assets\/smartgrade-secure\.png|LICENSE|CHANGELOG\.md|README\.md|package\.json|config\.schema\.json)$/);
 }
 const manifest = JSON.parse(entries.get('package/package.json').toString());
 assert.equal(manifest.name, 'homebridge-smartgrade-secure');
-assert.equal(manifest.private, true);
+assert.notEqual(manifest.private, true);
+assert.equal(manifest.license, 'MIT');
 assert.ok(entries.has('package/dist/setup.js'));
 assert.ok(entries.get('package/dist/setup.js').toString().startsWith('#!/usr/bin/env node'));
 const dir = await mkdtemp(join(tmpdir(), 'smartgrade-package-'));

@@ -37,5 +37,5 @@ jobs:
       - run: pnpm run build
       - run: pnpm test
       - run: pnpm pack
-      - run: node test/package.check.mjs homebridge-smartgrade-secure-0.1.0-alpha.2.tgz
+      - run: node test/package.check.mjs
       - run: git diff --check

@@ -25,7 +25,7 @@
 - The test harness loads the installed Homebridge API implementation relative to its resolved entrypoint because Homebridge 1 and 2 package their files differently. Production code does not import Homebridge internals.
 - HTTPS polling is the initial status mechanism. Plaintext MQTT from the APK is not used.
 
-## Remaining verification
+## Deployment verification (before public release)
 
 SMS login, profile validation, device discovery, and read-only status retrieval were verified against the live cloud on 2026-09-21. Both discovered type-7 boilers were online and off. Live responses required numeric account-ID normalization and plain-array device lists. The single-device GET returned HTTP 405; status reads now fall back to the site device list with exact identity validation. An authorized brief on/off test of the selected boiler succeeded, with independent cloud reads confirming both transitions and final off state. The APK power endpoint returned HTTP 404; the verified control endpoint is POST devices/{id}/toggle_switches with an explicit switch_1 boolean. Its response can contain the old state, so success requires subsequent readback. Physical relay operation was not independently observed. Alpha.2 is installed on the authorized homebridge-pi host, which runs Homebridge 2.4.0 and Node 24.20.0. Both boilers were registered. The custom UI server was verified via its real IPC interface on that host: saved login recognized, bootstrap available, and both supported boilers discovered. The new SMS UI flow is covered by synthetic tests; no additional live SMS was requested. The plugin has not been merged to main or published to npm.
 
@@ -36,3 +36,7 @@ No deferred minor findings from the independent review.
 The Homebridge custom settings page supports phone/OTP login, cloud discovery, polling interval and per-device exclusions. Tokens remain in private files; the UI receives only login availability and allowlisted device fields. SMS requests have a 60-second cooldown per UI server and pending logins expire after 10 minutes. Excluded cached accessories are unregistered on restart even during cloud failure. A one-time private bootstrap file is still required. Cloud device names are trimmed for HomeKit compatibility.
 
 The installed settings page was also verified in Homebridge UI 5.29.0: SMS controls rendered, Discover devices returned both boilers, and Save settings succeeded with both boilers included. No new SMS or device power command was sent during UI verification.
+
+## Public release preparation
+
+Version 0.1.0 adds the supplied branding, public installation/setup documentation, MIT code license, npm metadata, and tag-triggered trusted publishing workflow. The initial version is published manually to create the registry package before the trusted publisher can be configured. Known private values were scanned across all existing Git revisions with zero findings. No vendor source, APK or private session is packaged.
