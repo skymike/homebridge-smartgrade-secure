@@ -1,0 +1,25 @@
+<div class="container py-3">
+  <h3>SmartGrade Secure</h3>
+  <p>Connect your account and choose which water boilers appear in Homebridge.</p>
+  <p id="status" role="status" aria-live="polite">Checking connection…</p>
+  <section class="card p-3 mb-3">
+    <h5>SMS sign-in</h5>
+    <p id="bootstrap" class="text-muted"></p>
+    <label for="phone">SmartGrade phone number</label>
+    <input id="phone" class="form-control mb-2" type="tel" autocomplete="tel" placeholder="05…">
+    <button id="request" class="btn btn-primary mb-3" type="button">Request SMS code</button>
+    <label for="code">Verification code</label>
+    <input id="code" class="form-control mb-2" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="8">
+    <button id="verify" class="btn btn-primary" type="button" disabled>Sign in</button>
+  </section>
+  <section class="card p-3 mb-3">
+    <h5>Cloud devices</h5>
+    <button id="discover" class="btn btn-outline-primary mb-3" type="button">Discover devices</button>
+    <p>Checked boilers appear in Homebridge. Uncheck to exclude a boiler; this does not change its power or remove it from SmartGrade. Restart Homebridge after saving.</p>
+    <div id="devices"></div>
+    <label for="poll">Refresh interval (seconds)</label>
+    <input id="poll" class="form-control mb-3" type="number" min="15" max="300" value="30">
+    <button id="save" class="btn btn-success" type="button" disabled>Save settings</button>
+  </section>
+</div>
+<script src="app.js"></script>

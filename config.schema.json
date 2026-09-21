@@ -1,0 +1,52 @@
+{
+  "pluginAlias": "SmartGradeSecure",
+  "pluginType": "platform",
+  "singular": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "default": "SmartGrade Secure"
+      },
+      "sessionFile": {
+        "title": "Private session file",
+        "type": "string",
+        "description": "Absolute path to the session created with smartgrade-setup login."
+      },
+      "bootstrapFile": {
+        "title": "Private application bootstrap file",
+        "type": "string",
+        "description": "Absolute path used to renew the app token. Keep readable only by your Homebridge account."
+      },
+      "pollInterval": {
+        "title": "Polling interval (seconds)",
+        "type": "integer",
+        "default": 30,
+        "minimum": 15,
+        "maximum": 300
+      },
+      "includeDeviceIds": {
+        "title": "Include device IDs (optional)",
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Leave empty for all supported boiler switches. Other product types are never exposed automatically."
+      },
+      "excludeDeviceIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Excluded boilers are removed from Homebridge after restart, without changing the cloud device.",
+        "title": "Exclude device IDs"
+      }
+    },
+    "required": [
+      "sessionFile"
+    ]
+  },
+  "customUi": true
+}

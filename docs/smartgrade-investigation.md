@@ -80,4 +80,10 @@ Evidence: `data/connection/MqttConnector.java` and `DevicePowerOn.java`.
 - [Homebridge dynamic platform lifecycle](https://developers.homebridge.io/homebridge/interfaces/DynamicPlatformPlugin.html).
 - [Official Homebridge plugin template](https://github.com/homebridge/homebridge-plugin-template).
 
-Implementation, installation, publication, and live device control have not been performed.
+An initial plugin implementation now exists with offline protocol and Homebridge tests. Installation on the user's Homebridge, npm publication, account login verification and physical device control have not been performed.
+
+## Live API verification (2026-09-21)
+
+The authenticated profile and login response return numeric user IDs; these are normalized to strings without coercing tokens or accepting unsafe numeric IDs. Site/device IDs remain strings. Site device-list responses are plain arrays. The APK single-device GET currently returns HTTP 405, so readback falls back only for that status to the authenticated site device list and validates the exact device and site identity.
+
+Product 7 maps to `title_device_type7`, whose English APK resource is "Smart switch boiler box". The two account boilers use this type, so types 6 and 7 are supported. Login, discovery and status were verified. A user-authorized brief on/off test confirmed both state transitions through independent cloud reads, ending off. The APK /power route returned HTTP 404; POST /api/v1/devices/{device_id}/toggle_switches with {"switch_1":true} or {"switch_1":false} succeeded. Despite its name, this submits an explicit state. Its response contained the previous state, so bounded follow-up reads remain necessary. Physical relay operation was not independently observed.
