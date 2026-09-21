@@ -22,7 +22,7 @@ for (let offset = 0; offset + 512 <= bytes.length;) {
 }
 assert.ok(entries.size > 5);
 for (const name of entries.keys()) {
-  assert.match(name, /^package\/(dist\/[a-z-]+\.(?:js|d\.ts)|README\.md|package\.json|config\.schema\.json)$/);
+  assert.match(name, /^package\/(dist\/[a-z-]+\.(?:js|d\.ts)|homebridge-ui\/(?:server\.js|public\/(?:index\.html|app\.js))|README\.md|package\.json|config\.schema\.json)$/);
 }
 const manifest = JSON.parse(entries.get('package/package.json').toString());
 assert.equal(manifest.name, 'homebridge-smartgrade-secure');

@@ -4,7 +4,7 @@ An experimental Homebridge plugin for SmartGrade Secure water-heater switches us
 
 ## Status
 
-Initial implementation with offline protocol and Homebridge tests. Account login and physical heater operation have not yet been verified. No package has been published to npm.
+Private alpha with verified SMS login, device discovery, and a live boiler on/off test confirmed through cloud readback. Physical relay operation was not independently observed. Offline tests pass on Homebridge 1 and 2. No package has been published to npm.
 
 - [Protocol findings and design](docs/smartgrade-investigation.md)
 - [Implementation plan](docs/superpowers/plans/2026-09-21-smartgrade-secure.md)
@@ -29,13 +29,17 @@ pnpm test
 pnpm pack
 ```
 
-The result is `homebridge-smartgrade-secure-0.1.0-alpha.1.tgz`. Install this tarball through your Homebridge installation's normal local-package process. For a conventional npm-based Homebridge host:
+The result is `homebridge-smartgrade-secure-0.1.0-alpha.2.tgz`. Install this tarball through your Homebridge installation's normal local-package process. For a conventional npm-based Homebridge host:
 
 ```sh
-npm install -g /absolute/path/homebridge-smartgrade-secure-0.1.0-alpha.1.tgz
+npm install -g /absolute/path/homebridge-smartgrade-secure-0.1.0-alpha.2.tgz
 ```
 
 Use the account and permissions appropriate to your installation. The plugin is HAP-only; it does not require Matter.
+
+## Settings page
+
+Open the plugin settings in Homebridge. Request an SMS using your SmartGrade phone number, enter the code, then discover cloud devices. Uncheck a boiler to exclude it from Homebridge, save, and restart Homebridge. Exclusion removes its Homebridge accessory without changing the boiler or its cloud account. The private bootstrap file must be provisioned once as described below; existing sessions work immediately. Phone numbers and codes are never stored in Homebridge configuration.
 
 ## Private setup
 

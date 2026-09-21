@@ -80,3 +80,12 @@ test('a stopped old-site setter cannot complete and overwrite a rebound characte
   confirmation.resolve({...device,on:true});await rejected;
   assert.equal(await characteristic.handleGetRequest(),false);
 });
+
+test('explicit exclusions remove cached accessories even when cloud is unavailable',async t=>{
+ const first=harness({listDevices:async()=>[device],close:()=>{}}); t.after(()=>first.platform.stop());
+ await first.platform.discoverDevices();
+ const next=harness({listDevices:async()=>{throw Error('offline');},close:()=>{}},{excludeDeviceIds:[device.id]});t.after(()=>next.platform.stop());
+ next.platform.configureAccessory(first.registered[0]);
+ await assert.rejects(next.platform.discoverDevices());
+ assert.equal(next.removed.length,1);
+});

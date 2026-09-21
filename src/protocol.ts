@@ -76,7 +76,7 @@ export function parseDevice(value: unknown): Device {
   if (typeof row.is_online !== 'boolean' || !Number.isSafeInteger(row.product_id)) return invalidResponse();
   if (row.switch_1 != null && typeof row.switch_1 !== 'boolean') return invalidResponse();
   return {
-    id: nonempty(row.id), siteId: nonempty(row.site_id), name: nonempty(row.name),
+    id: nonempty(row.id), siteId: nonempty(row.site_id), name: nonempty(row.name).trim(),
     productId: row.product_id as number, online: row.is_online,
     on: (row.switch_1 as boolean | null | undefined) ?? null,
     firmware: typeof row.firmware === 'string' ? row.firmware : undefined,

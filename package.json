@@ -1,6 +1,6 @@
 {
   "name": "homebridge-smartgrade-secure",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "description": "Homebridge water heater switches for SmartGrade Secure via the IoTech cloud",
   "license": "UNLICENSED",
   "private": true,
@@ -12,7 +12,8 @@
   "files": [
     "dist",
     "config.schema.json",
-    "README.md"
+    "README.md",
+    "homebridge-ui"
   ],
   "keywords": [
     "homebridge-plugin",
@@ -42,5 +43,8 @@
     "homebridge": "^1.11.0",
     "homebridge-v2": "npm:homebridge@2.4.0",
     "typescript": "~5.9.3"
+  },
+  "dependencies": {
+    "@homebridge/plugin-ui-utils": "^2.2.6"
   }
 }

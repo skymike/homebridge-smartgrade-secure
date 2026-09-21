@@ -9,7 +9,7 @@ import { loadBootstrap, loadSession, saveSession } from './session.js';
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings.js';
 
 export interface CloudClient extends DeviceClient { listDevices(): Promise<Device[]>; close(): void }
-export interface Config extends PlatformConfig { sessionFile?: string; bootstrapFile?: string; pollInterval?: number; includeDeviceIds?: string[] }
+export interface Config extends PlatformConfig { sessionFile?: string; bootstrapFile?: string; pollInterval?: number; includeDeviceIds?: string[]; excludeDeviceIds?: string[] }
 
 async function createClient(config: Config): Promise<CloudClient> {
   const credentials = config.bootstrapFile ? await loadBootstrap(config.bootstrapFile) : undefined;
@@ -42,6 +42,7 @@ export class SmartGradePlatform implements DynamicPlatformPlugin {
     this.configError = !config.sessionFile || !isAbsolute(config.sessionFile) ||
       Boolean(config.bootstrapFile && !isAbsolute(config.bootstrapFile)) ||
       !Number.isInteger(interval) || interval < 15 || interval > 300 ||
+      (config.excludeDeviceIds !== undefined && (!Array.isArray(config.excludeDeviceIds) || config.excludeDeviceIds.some(id => typeof id !== 'string' || !id.trim()))) ||
       (config.includeDeviceIds !== undefined && (!Array.isArray(config.includeDeviceIds) || config.includeDeviceIds.some(id => typeof id !== 'string' || !id.trim())));
     api.on('didFinishLaunching', () => { void this.cycle(); });
     api.on('shutdown', () => this.stop());
@@ -67,7 +68,7 @@ export class SmartGradePlatform implements DynamicPlatformPlugin {
   }
 
   private selected(device: Device): boolean {
-    return !this.config.includeDeviceIds?.length || this.config.includeDeviceIds.includes(device.id);
+    return !this.config.excludeDeviceIds?.includes(device.id) && (!this.config.includeDeviceIds?.length || this.config.includeDeviceIds.includes(device.id));
   }
 
   private bind(accessory: PlatformAccessory, device: Device): WaterHeaterAccessory {
@@ -82,6 +83,14 @@ export class SmartGradePlatform implements DynamicPlatformPlugin {
   async discoverDevices(): Promise<void> {
     if (this.stopped) return;
     if (this.configError) throw new CloudError('CONFIG', 'Set an absolute session file path and a polling interval from 15 to 300 seconds.');
+    for (const [uuid, accessory] of this.cache) {
+      if (this.config.excludeDeviceIds?.includes(accessory.context.device?.id)) {
+        this.wrappers.get(uuid)?.stop();
+        this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+        this.wrappers.delete(uuid);
+        this.cache.delete(uuid);
+      }
+    }
     if (this.discovering) return this.discovering;
     this.discovering = this.discover().finally(() => { this.discovering = undefined; });
     return this.discovering;

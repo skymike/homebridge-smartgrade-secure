@@ -26,10 +26,13 @@ export class WaterHeaterAccessory {
   ) {
     accessory.getService(api.hap.Service.AccessoryInformation)!
       .setCharacteristic(api.hap.Characteristic.Manufacturer, 'SmartGrade')
-      .setCharacteristic(api.hap.Characteristic.Model, 'Boiler switch (product 6)')
+      .setCharacteristic(api.hap.Characteristic.Model, `Boiler switch (product ${identity.productId})`)
       .setCharacteristic(api.hap.Characteristic.SerialNumber, identity.id)
       .setCharacteristic(api.hap.Characteristic.FirmwareRevision, identity.firmware || 'Unknown');
     this.service = accessory.getService(api.hap.Service.Switch) ?? accessory.addService(api.hap.Service.Switch, identity.name);
+    accessory.displayName = identity.name;
+    accessory.getService(api.hap.Service.AccessoryInformation)!.setCharacteristic(api.hap.Characteristic.Name, identity.name);
+    this.service.setCharacteristic(api.hap.Characteristic.Name, identity.name);
     this.service.getCharacteristic(api.hap.Characteristic.On).onGet(() => this.getOn()).onSet(value => this.setOn(value));
     this.invalidate();
   }
