@@ -180,7 +180,7 @@ export class SmartGradeClient {
 
   async setPower(deviceId: string, on: boolean): Promise<Device> {
     if (typeof on !== 'boolean') throw new CloudError('INPUT', 'Power state must be a boolean.');
-    const device = parseDevice(await this.request(`devices/${encodeURIComponent(nonempty(deviceId))}/power`, 'POST', { power_on: on }));
+    const device = parseDevice(await this.request(`devices/${encodeURIComponent(nonempty(deviceId))}/toggle_switches`, 'POST', { switch_1: on }));
     if (device.id !== deviceId) return invalidResponse();
     return device;
   }

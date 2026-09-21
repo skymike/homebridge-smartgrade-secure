@@ -22,9 +22,9 @@ test('real HTTP transport emits exact desired-state payload, token headers and e
   }});
   await client.setPower('heater /1', false);
   assert.equal(received.length, 1);
-  assert.equal(received[0].url, '/api/v1/devices/heater%20%2F1/power');
+  assert.equal(received[0].url, '/api/v1/devices/heater%20%2F1/toggle_switches');
   assert.equal(received[0].method, 'POST');
-  assert.deepEqual(JSON.parse(received[0].body), {power_on:false});
+  assert.deepEqual(JSON.parse(received[0].body), {switch_1:false});
   assert.equal(received[0].headers.authorization, 'Bearer fixture-user');
   assert.equal(received[0].headers['x-app-token'], 'Bearer fixture-app');
 });
