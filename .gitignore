@@ -1,0 +1,10 @@
+node_modules/
+dist/
+coverage/
+research/
+private/
+*.tgz
+*.apk
+.env
+.env.*
+!.env.example
